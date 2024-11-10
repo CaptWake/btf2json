@@ -25,6 +25,29 @@ Interested in how this works? See the
 technical details.
 
 
+## Volatility Patch
+
+Volatility uses a JSON schema to validate profiles before using them. In order
+for a `btf2json`-generated profile to pass the validation stage you need the
+following patch:
+
+```patch
+diff --git a/volatility3/schemas/schema-6.2.0.json b/volatility3/schemas/schema-6.2.0.json
+index 1f388005..65a6f5c6 100644
+--- a/volatility3/schemas/schema-6.2.0.json
++++ b/volatility3/schemas/schema-6.2.0.json
+@@ -105,7 +105,7 @@
+       "properties": {
+         "kind": {
+           "type": "string",
+-          "pattern": "^(dwarf|symtab|system-map)$"
++          "pattern": "^(btf|symdb|dwarf|symtab|system-map)$"
+         },
+         "name": {
+           "type": "string"
+```
+
+
 ## Building
 
 `btf2json` is written in [Rust](https://www.rust-lang.org/). The easiest way
