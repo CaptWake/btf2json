@@ -104,7 +104,7 @@ impl Symbols {
 
     /// Get name of the System.map that was used to construct these `Symbols`.
     pub fn map_name(&self) -> Option<String> {
-        self.name_map.as_ref().map(|n| n.clone())
+        self.name_map.clone()
     }
 
     /// Returns pointer to the embedded symdb.

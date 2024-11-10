@@ -24,7 +24,7 @@ pub fn is_elf(raw: &[u8]) -> Result<Endian> {
 
 /// Returns the `.BTF` section of the ELF file.
 pub fn extract_btfsec(raw: &[u8]) -> Result<&[u8]> {
-    let elf = Elf::parse(&raw)?;
+    let elf = Elf::parse(raw)?;
     for shdr in elf.section_headers.iter() {
         let Some(sec_name) = elf.shdr_strtab.get_at(shdr.sh_name) else {
             log::debug!("Unable to get name for section: {}", shdr.sh_name);
@@ -41,7 +41,7 @@ pub fn extract_btfsec(raw: &[u8]) -> Result<&[u8]> {
 
 /// Returns the Linux banner of the ELF file.
 pub fn get_banner(raw: &[u8]) -> Result<String> {
-    let elf = Elf::parse(&raw)?;
+    let elf = Elf::parse(raw)?;
     for sym in elf.syms.iter() {
         let Some(sym_name) = elf.strtab.get_at(sym.st_name) else {
             log::debug!("Unable to get name for symbol: {}", sym.st_name);
