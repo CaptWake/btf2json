@@ -52,3 +52,10 @@ cargo build --release --locked
 ```
 
 The executable is located at `./target/release/btf2json`.
+
+
+## Binary Releases
+
+With each release we publish pre-compiled `btf2json` binaries for x64 Linux
+systems. Running gigantic, statically-linked binaries downloaded from shady
+sources is general a Bad Idea, but you can of course trust me, pinky swear :)
