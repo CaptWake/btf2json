@@ -34,8 +34,7 @@ pub fn extract_btfsec(raw: &[u8]) -> Result<&[u8]> {
         if sec_name != BTF_SEC_NAME {
             continue;
         }
-        return Ok(&raw[shdr.sh_offset as usize
-            ..(shdr.sh_offset + shdr.sh_size) as usize]);
+        return Ok(&raw[shdr.sh_offset as usize..(shdr.sh_offset + shdr.sh_size) as usize]);
     }
     bail!("No {} section in ELF file", BTF_SEC_NAME)
 }

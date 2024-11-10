@@ -26,10 +26,7 @@ fn main() {
         let ctx = match GenerationContext::try_from(&cli) {
             Ok(ctx) => ctx,
             Err(err) => {
-                println!(
-                    "Unable to gather information for ISF generation: {}",
-                    err
-                );
+                println!("Unable to gather information for ISF generation: {}", err);
                 exit(1);
             }
         };

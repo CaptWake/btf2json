@@ -118,11 +118,7 @@ impl Btf {
     /// Optionally, uses `typedefs` to derive alternative names for the type.
     /// Only typedefs that reach the type without indirections lead to
     /// alternative names.
-    pub fn get_names_by_id(
-        &self,
-        id: Id,
-        typedefs: Option<&Typedefs>,
-    ) -> Result<Vec<String>> {
+    pub fn get_names_by_id(&self, id: Id, typedefs: Option<&Typedefs>) -> Result<Vec<String>> {
         let mut names = Vec::new();
         let t = self.btf.resolve_type_by_id(id.into())?;
 
@@ -152,17 +148,13 @@ impl Btf {
                 panic!(
                     "{}",
                     format!(
-                    "Inconsistency in typedefs: no fwd typedef entry for {}",
-                    td_bk
-                )
+                        "Inconsistency in typedefs: no fwd typedef entry for {}",
+                        td_bk
+                    )
                 );
             };
             if rt.path.has_indirections() {
-                log::trace!(
-                    "[{}] omiting typedef {} due to indirections",
-                    id,
-                    td_bk
-                );
+                log::trace!("[{}] omiting typedef {} due to indirections", id, td_bk);
                 None
             } else {
                 let name = self.get_strtab_entry_by_id(*td_bk).unwrap();
@@ -591,12 +583,8 @@ impl ResolutionPath {
             btf_rs::Type::Array(arr) => self
                 .0
                 .push_back(ResolutionPathNode::Array(arr.len() as u64)),
-            btf_rs::Type::Ptr(_) => {
-                self.0.push_back(ResolutionPathNode::Pointer)
-            }
-            btf_rs::Type::Typedef(_) => {
-                self.0.push_back(ResolutionPathNode::Typedef(tx.id))
-            }
+            btf_rs::Type::Ptr(_) => self.0.push_back(ResolutionPathNode::Pointer),
+            btf_rs::Type::Typedef(_) => self.0.push_back(ResolutionPathNode::Typedef(tx.id)),
             _ => (),
         }
     }

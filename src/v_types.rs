@@ -57,7 +57,9 @@ pub enum TypeDescr {
 
 impl TypeDescr {
     pub fn new_void() -> Self {
-        Self::Base { name: String::from("void") }
+        Self::Base {
+            name: String::from("void"),
+        }
     }
 
     pub fn name(&self) -> Option<&String> {
@@ -163,7 +165,10 @@ impl From<TypeDescrConstructionCtx<'_>> for TypeDescr {
                 } else if ctx.rt.tx.t.is_func() {
                     Self::Function
                 } else {
-                    panic!("Unable to construct type descriptor: res type {:?}", ctx.rt.tx)
+                    panic!(
+                        "Unable to construct type descriptor: res type {:?}",
+                        ctx.rt.tx
+                    )
                 }
             }
         }
@@ -200,10 +205,7 @@ impl TryFrom<&btf::Type> for BaseKind {
                     Ok(Self::Int)
                 }
             }
-            _ => bail!(
-                "Type {:?} cannot be converted to an ISF base type",
-                type_
-            ),
+            _ => bail!("Type {:?} cannot be converted to an ISF base type", type_),
         }
     }
 }
@@ -360,9 +362,7 @@ impl TryFrom<&UserConstructionCtx<'_>> for UserFields {
             .tx
             .t
             .as_has_members()
-            .context(
-                "Cannot construct ISF user type from BTF type without members.",
-            )?
+            .context("Cannot construct ISF user type from BTF type without members.")?
             .members();
 
         Ok(Self(
@@ -371,10 +371,7 @@ impl TryFrom<&UserConstructionCtx<'_>> for UserFields {
                 .map(|m| {
                     (
                         m.name(ctx.basic_ctx.btf),
-                        UserField::from(UserFieldConstructionCtx {
-                            uctx: ctx,
-                            m,
-                        }),
+                        UserField::from(UserFieldConstructionCtx { uctx: ctx, m }),
                     )
                 })
                 .collect(),
@@ -398,12 +395,10 @@ pub struct UserConstructionCtx<'a> {
 impl From<UserConstructionCtx<'_>> for User {
     fn from(ctx: UserConstructionCtx) -> Self {
         User {
-            kind: UserKind::try_from(&ctx.basic_ctx.tx.t).expect(
-                "Attempt to construct ISF user type from invalid BTF type.",
-            ),
+            kind: UserKind::try_from(&ctx.basic_ctx.tx.t)
+                .expect("Attempt to construct ISF user type from invalid BTF type."),
             size: ctx.basic_ctx.tx.t.size().unwrap() as u64,
-            fields: UserFields::try_from(&ctx)
-                .expect("Failed to construct user type."),
+            fields: UserFields::try_from(&ctx).expect("Failed to construct user type."),
         }
     }
 }

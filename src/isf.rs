@@ -19,10 +19,7 @@ mod quirks {
 
     /// Adds a base type named "pointer" with the appropriate size and
     /// endianness.
-    pub fn fixup_base(
-        base_types: &mut BTreeMap<String, v_types::Base>,
-        endian: &btf::Endian,
-    ) {
+    pub fn fixup_base(base_types: &mut BTreeMap<String, v_types::Base>, endian: &btf::Endian) {
         if let Entry::Vacant(ent) = base_types.entry(String::from("pointer")) {
             ent.insert(v_types::Base::new_pointer(endian.into()));
         }
@@ -149,8 +146,7 @@ impl Isf {
 
     /// Verifies that all types referenced by fields of user types are defined.
     pub fn check_user_types(&self) -> Result<()> {
-        let mut problematic_types: HashMap<String, Vec<&String>> =
-            HashMap::new();
+        let mut problematic_types: HashMap<String, Vec<&String>> = HashMap::new();
         let mut undefined_types: HashSet<String> = HashSet::new();
 
         for (name, ut) in self.user_types.iter() {
@@ -172,10 +168,7 @@ impl Isf {
                         field_type_kind,
                         field_type_name,
                     );
-                    undefined_types.insert(format!(
-                        "{} {}",
-                        field_type_kind, field_type_name
-                    ));
+                    undefined_types.insert(format!("{} {}", field_type_kind, field_type_name));
                     Some(field_name)
                 })
                 .collect();
@@ -205,9 +198,7 @@ impl Isf {
     fn is_defined(&self, t: &v_types::TypeDescr) -> bool {
         let rt = t.resolve();
         match rt {
-            v_types::TypeDescr::Base { name } => {
-                self.base_types.contains_key(name)
-            }
+            v_types::TypeDescr::Base { name } => self.base_types.contains_key(name),
             v_types::TypeDescr::Enum { name } => self.enums.contains_key(name),
             v_types::TypeDescr::Union { name } => self
                 .user_types

@@ -32,15 +32,10 @@ impl From<symbols::Symbol> for Symbol {
             address: sym.address(),
             t: sym
                 .r#type()
-                .map(|t| {
-                    match serde_json::from_str::<v_types::TypeDescr>(&t) {
-                        Ok(t) => t,
-                        Err(e) => {
-                            panic!(
-                                "Symbol type had invalid format: {}: {}",
-                                e, t
-                            )
-                        }
+                .map(|t| match serde_json::from_str::<v_types::TypeDescr>(&t) {
+                    Ok(t) => t,
+                    Err(e) => {
+                        panic!("Symbol type had invalid format: {}: {}", e, t)
                     }
                 })
                 .unwrap_or(v_types::TypeDescr::Base {
