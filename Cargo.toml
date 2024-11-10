@@ -1,0 +1,28 @@
+[package]
+name = "btf2json"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "btf2json"
+path = "src/lib.rs"
+
+[[bin]]
+name = "btf2json"
+path = "src/bin/btf2json.rs"
+
+[dependencies]
+anyhow = "1.0.76"
+base64 = "0.21.7"
+btf-rs = "1.1.1"
+clap = { version = "4.4.11", features = ["derive"] }
+env_logger = "0.10.1"
+goblin = "0.8.0"
+log = "0.4.20"
+memmap = "0.7.0"
+rust-crypto = "0.2.36"
+rust-embed = { version = "8.2.0", features = ["debug-embed"] }
+serde = { version = "1.0.193", features = ["derive"] }
+serde_json = "1.0.108"
