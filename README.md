@@ -77,6 +77,12 @@ cargo build --release --locked
 The executable is located at `./target/release/btf2json`.
 
 
+## Packaging
+
+Users of Arch-based distros can install `btf2json` via the
+[AUR](https://aur.archlinux.org/packages/btf2json).
+
+
 ## Binary Releases
 
 With each release we publish pre-compiled `btf2json` binaries for x64 Linux
