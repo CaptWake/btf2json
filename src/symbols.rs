@@ -116,8 +116,13 @@ impl Symbols {
     pub fn symdb_name(&self) -> Option<&'static str> {
         self.name_symdb
     }
+
+    pub fn sym_addr_from_name(&self, sym_name: &str) -> Option<u64> {
+        self.symbols.get(sym_name).map(|s| s.addr)
+    }
 }
 
+#[derive(Copy, Clone)]
 enum SymbolScope {
     Global,
     Local,
@@ -134,6 +139,7 @@ impl From<&char> for SymbolScope {
 }
 
 #[allow(non_camel_case_types, dead_code)]
+#[derive(Copy, Clone)]
 enum SymbolKind {
     V, // weak object
     v,
@@ -249,7 +255,30 @@ impl SymbolsBuilder {
                 _ => bail!("Invalid format of system map: {}", line),
             };
         }
-        self.0.symbols.extend(system_map_symbols);
+        // Update each symbol address removing the KASLR shift (we use the _stext symbol - sym_addr = sym_addr - (_stext - 0xffffffff81000000))
+        // 0xffffffff81000000 is the address of _stext in System.map, we now are using the kallsyms one
+
+        let stext_addr: u64 = match system_map_symbols.get("_stext") {
+            Some(sym) => sym.addr,
+            _ => bail!("No _stext symbol found in system map."),
+        };
+
+        self.0.symbols = system_map_symbols
+            .iter()
+            .map(|(name, sym)| {
+                let addr = sym.addr - (stext_addr - 0xffffffff81000000);
+                (
+                    String::from(name),
+                    Symbol {
+                        addr,
+                        t: sym.t.clone(),
+                        kind: sym.kind,
+                        scope: sym.scope,
+                        constant_data: None,
+                    },
+                )
+            })
+            .collect();
 
         // record metadata
         let name_map = String::from(
