@@ -256,8 +256,6 @@ impl SymbolsBuilder {
                 _ => bail!("Invalid format of system map: {}", line),
             };
         }
-        // Update each symbol address removing the KASLR shift (we use the _stext symbol - sym_addr = sym_addr - (_stext - 0xffffffff81000000))
-        // 0xffffffff81000000 is the address of _stext in System.map, we now are using the kallsyms one
 
         let stext_addr: u64 = match system_map_symbols.get("_stext") {
             Some(sym) => sym.addr,
@@ -267,7 +265,7 @@ impl SymbolsBuilder {
         self.0.symbols = system_map_symbols
             .iter()
             .map(|(name, sym)| {
-                // Default offset value for x86_64
+                println!("Base offset: {:#x}", self.0.base_offset);
                 let addr = sym.addr - (stext_addr - self.0.base_offset);
                 (
                     String::from(name),
@@ -356,7 +354,9 @@ impl TryFrom<&Cli> for SymbolsBuilder {
     fn try_from(cli: &Cli) -> Result<SymbolsBuilder> {
         let sym_builder = if cli.map.is_some() {
             log::debug!("Got System.map file for symbol addresses.");
-            SymbolsBuilder::new().add_from_system_map(cli.map.as_ref().unwrap())
+            SymbolsBuilder::new()
+                .add_base_offset_from_cli(cli)
+                .add_from_system_map(cli.map.as_ref().unwrap())
         } else if cli.image.is_some() {
             log::debug!("Got memory image, extracting symbol information.");
             bail!("Extraction of symbols from memory image is not implemented.")
@@ -365,7 +365,6 @@ impl TryFrom<&Cli> for SymbolsBuilder {
         }?;
         let sym_builder = sym_builder
             .add_types_from_symdb()
-            .add_base_offset_from_cli(cli)
             .add_banner_from_cli(cli)?;
         log::debug!(
             "Got {} symbols ({} with types)",
