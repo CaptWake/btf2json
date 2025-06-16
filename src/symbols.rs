@@ -265,7 +265,6 @@ impl SymbolsBuilder {
         self.0.symbols = system_map_symbols
             .iter()
             .map(|(name, sym)| {
-                println!("Base offset: {:#x}", self.0.base_offset);
                 let addr = sym.addr - (stext_addr - self.0.base_offset);
                 (
                     String::from(name),
