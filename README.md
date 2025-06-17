@@ -15,7 +15,7 @@ adb push <lemon_binary> /data/local/tmp
 
 ---
 
-## 🔐 Step 2: Enter the Android Shell as Root
+## Step 2: Enter the Android Shell as Root
 
 ```bash
 adb shell
@@ -94,7 +94,7 @@ python utilities/patch_profile.py -f ./profile.json
 
 Volatility3 uses a strict JSON schema to validate profiles, so we need to patch the schema.
 
-### 🔧 Apply the Patch
+### Apply the Patch
 
 1. **Clone the Volatility3 repository (if not already cloned):**
 
